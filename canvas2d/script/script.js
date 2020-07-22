@@ -100,6 +100,12 @@
                         ctx.drawImage(image, 16, 16, 96, 96, 100, 300, 50, 50);
                     });
                     break;
+                case 'btn009':
+                    // テキストのフォントスタイルを設定する
+                    ctx.font = '30px cursive';
+                    // テキストを描画する
+                    drawText('graphics programming', 100, 100, purple);
+                    break;
             };
             $('#btn999').on('click', () => {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -304,6 +310,23 @@
         ctx.stroke();
         // パスを閉じることを明示する
         ctx.closePath();
+    }
+
+    /**
+     * テキストを描画する
+     * @param {string} text - 描画するテキスト
+     * @param {number} x - テキストを描画する位置の X 座標
+     * @param {number} y - テキストを描画する位置の Y 座標
+     * @param {string} [color] - テキストを描画する際の色
+     * @param {number} [width] - テキストを描画する幅に上限を設定する際の上限値
+     */
+    function drawText(text, x, y, color, width){
+        // 色が指定されている場合はスタイルを設定する
+        if(color != null){
+            ctx.fillStyle = color;
+        }
+        // strokeText の場合、テキストの輪郭のみ描写される
+        ctx.fillText(text, x, y, width);
     }
 
     /**

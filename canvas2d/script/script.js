@@ -25,7 +25,19 @@
     $(document).ready( () => {
         // 初期化処理を行う
         initialize();
-
+        $('#set-shadow').on('change', () => {
+            if ($('#set-shadow').is(':checked')) {
+                // 影のぼかしを設定する
+                ctx.shadowBlur = 5;
+                // 影の色を設定する
+                ctx.shadowColor = '#666666';
+                // 影のオフセットする量を設定する
+                ctx.shadowOffsetX = 5;
+                ctx.shadowOffsetY = 5;
+            } else {
+                ctx.shadowColor = 'rgba(0, 0, 0, 0)';
+            }
+        });
         $('.btn').on('click', function () {
             let id =  $(this).attr('id');
             switch (id) {

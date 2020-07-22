@@ -12,6 +12,12 @@
      */
     let ctx = null;
     /**
+    /**
+     * Canvas2D のコンポジットオペレーション
+     * @type {Boolean}
+     */
+    let setShadow = false;
+    /**
      * 色を指定
      */
     let red = 'rgba(255, 0, 0, 0.3)';
@@ -25,8 +31,44 @@
     $(document).ready( () => {
         // 初期化処理を行う
         initialize();
+
+        $('.btn').on('click', function () {
+            let id =  $(this).attr('id');
+            render(id);
+        });
+        $('#btn999').on('click', () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        });
+    }, false);
+
+    /**
+     * canvas やコンテキストを初期化する
+     */
+    function initialize(){
+        // HTML 上の canvas には id 属性が振られているので
+        // querySelector を利用して参照し、変数に格納する
+        canvas = document.body.querySelector('#main_canvas');
+
+        // canvas の大きさをウィンドウ全体を覆うように変更する
+        canvas.width = window.innerWidth;   // 幅
+        canvas.height = window.innerHeight; // 高さ
+        // canvas からコンテキストを取得する
+        ctx = canvas.getContext('2d');
+
+        // ドロップシャドウのオプションチェック
         $('#set-shadow').on('change', () => {
-            if ($('#set-shadow').is(':checked')) {
+            setShadow = $('#set-shadow').is(':checked')
+        });
+    }
+
+    /**
+     * 描画処理を実行する
+     * @param {string} [id = 'btn001'] - 実行対象の指定
+     */
+    function render(id = 'btn001') {
+        ctx.globalCompositeOperation = compositeOperation;
+
+        if (setShadow) {
                 // 影のぼかしを設定する
                 ctx.shadowBlur = 5;
                 // 影の色を設定する
@@ -37,9 +79,7 @@
             } else {
                 ctx.shadowColor = 'rgba(0, 0, 0, 0)';
             }
-        });
-        $('.btn').on('click', function () {
-            let id =  $(this).attr('id');
+
             switch (id) {
                 case 'btn001':
                     drawRect(0, 0, 100, 100, red);
@@ -142,25 +182,6 @@
                     drawRect(350, 100, 100, 100, radialGradient);
                     break;
             };
-            $('#btn999').on('click', () => {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-            });
-        });
-    }, false);
-
-    /**
-     * canvas やコンテキストを初期化する
-     */
-    function initialize(){
-        // HTML 上の canvas には id 属性が振られているので
-        // querySelector を利用して参照し、変数に格納する
-        canvas = document.body.querySelector('#main_canvas');
-
-        // canvas の大きさをウィンドウ全体を覆うように変更する
-        canvas.width = window.innerWidth;   // 幅
-        canvas.height = window.innerHeight; // 高さ
-        // canvas からコンテキストを取得する
-        ctx = canvas.getContext('2d');
     }
 
     /**

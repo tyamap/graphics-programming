@@ -12,9 +12,11 @@
      */
     let ctx = null;
     /**
-     * 背景色を指定
+     * 色を指定
      */
-    let color = 'rgba(255, 0, 0, 0.5)';
+    let red = 'rgba(255, 0, 0, 0.3)';
+    let green = 'rgba(0, 255, 0, 0.3)';
+    let blue = 'rgba(0, 0, 255, 0.3)';
 
     /**
      * ページのロードが完了したときに発火する load イベント
@@ -27,10 +29,10 @@
             let id =  $(this).attr('id');
             switch (id) {
                 case 'btn001':
-                    drawRect(0, 0, 100, 100, color);
+                    drawRect(0, 0, 100, 100, red);
                     break;
                 case 'btn002':
-                    drawLine(100, 100, 500, 250, color);
+                    drawLine(100, 100, 500, 250, red);
                     break;
                 case 'btn003':
                     // 多角形の各頂点を定義
@@ -40,7 +42,7 @@
                         100, 300, // 左下
                         300, 300  // 右下
                     ];
-                    drawPolygon(points, color);
+                    drawPolygon(points, green);
                     break;
                 case 'btn004':
                     // 多角形の頂点の数
@@ -53,7 +55,7 @@
                         randomPoints.push(generateRandomInt(300), generateRandomInt(300))
                     }
                     // 多角形の描画処理を行う
-                    drawPolygon(randomPoints, color);
+                    drawPolygon(randomPoints, green);
                     break;
             }
         });

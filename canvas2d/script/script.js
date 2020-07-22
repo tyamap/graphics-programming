@@ -87,6 +87,19 @@
                         purple
                     );
                     break;
+                case 'btn008':
+                    // 画像の読み込みを開始する
+                    imageLoader('./image/color.jpg', (loadedImage) => {
+                        // 引数経由で画像を受け取り変数に代入しておく
+                        image = loadedImage;
+                        // 画像を描画する（等倍）
+                        ctx.drawImage(image, 100, 100);
+                        // 画像を描画する（大きさを指定）
+                        ctx.drawImage(image, 300, 100, 200, 200);
+                        // 画像を描画する（一部を切り出し＋大きさを指定）
+                        ctx.drawImage(image, 16, 16, 96, 96, 100, 300, 50, 50);
+                    });
+                    break;
             }
         });
     }, false);

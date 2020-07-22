@@ -118,6 +118,29 @@
                     // テキストを描画する
                     drawText('graphics programming', 100, 100, purple);
                     break;
+                case 'btn010':
+                    // 線形グラデーションを生成する
+                    let linearGradient = ctx.createLinearGradient(0, 0, 0, 200);
+                    // 生成した線形グラデーションに色を配置する
+                    linearGradient.addColorStop(0.0, '#ff0000'); //   0% の位置に赤
+                    linearGradient.addColorStop(0.5, '#ffff00'); //  50% の位置に黄色
+                    linearGradient.addColorStop(1.0, '#0000ff'); // 100% の位置に青
+
+                    // 矩形を描画する（生成したグラデーションを文字列の代わりに色に指定する）
+                    drawRect(  0,   0, 100, 100, linearGradient);
+                    drawRect(100, 100, 100, 100, linearGradient);
+
+                    // 円形グラデーションを生成する
+                    let radialGradient = ctx.createRadialGradient(250, 0, 50, 250, 0, 300);
+                    // 生成した円形グラデーションに色を配置する
+                    radialGradient.addColorStop(0.0, '#006600'); //   0% の位置に暗い緑
+                    radialGradient.addColorStop(0.5, '#ffff00'); //  50% の位置に黄色
+                    radialGradient.addColorStop(1.0, '#ff00ff'); // 100% の位置にマゼンタ
+
+                    // 矩形を描画する（生成したグラデーションを文字列の代わりに色に指定する）
+                    drawRect(250,   0, 100, 100, radialGradient);
+                    drawRect(350, 100, 100, 100, radialGradient);
+                    break;
             };
             $('#btn999').on('click', () => {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);

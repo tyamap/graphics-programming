@@ -201,7 +201,7 @@
         ctx.fill();
     }
 
-        /**
+    /**
      * 扇形を描画する
      * @param {number} x - 扇形を形成する円の中心位置の X 座標
      * @param {number} y - 扇形を形成する円の中心位置の Y 座標
@@ -227,7 +227,7 @@
         ctx.fill();
     }
 
-        /**
+    /**
      * 線分を二次ベジェ曲線で描画する
      * @param {number} x1 - 線分の始点の X 座標
      * @param {number} y1 - 線分の始点の Y 座標

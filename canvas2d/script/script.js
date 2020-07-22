@@ -57,6 +57,18 @@
                     // 多角形の描画処理を行う
                     drawPolygon(randomPoints, green);
                     break;
+                case 'btn005':
+                    drawCircle(200, 200, 100, blue);
+                    break;
+                
+                case 'btn006':
+                    // 扇形の開始角
+                    let startRadian = Math.random() * Math.PI * 2.0;
+                    // 扇形の終了角
+                    let endRadian = Math.random() * Math.PI * 2.0;
+                    // 扇形の描画処理を行う
+                    drawFan(200, 200, 100, startRadian, endRadian, blue);
+                    break;
             }
         });
     }, false);
@@ -146,6 +158,54 @@
         // パスを閉じることを明示する
         ctx.closePath();
         // 設定したパスで多角形の描画を行う
+        ctx.fill();
+    }
+
+    /**
+     * 円を描画する
+     * @param {number} x - 円の中心位置の X 座標
+     * @param {number} y - 円の中心位置の Y 座標
+     * @param {number} radius - 円の半径
+     * @param {string} [color] - 円を描画する際の色
+     */
+    function drawCircle(x, y, radius, color){
+        // 色が指定されている場合はスタイルを設定する
+        if(color != null){
+            ctx.fillStyle = color;
+        }
+        // パスの設定を開始することを明示する
+        ctx.beginPath();
+        // 円のパスを設定する
+        ctx.arc(x, y, radius, 0.0, Math.PI * 2.0);
+        // パスを閉じることを明示する
+        ctx.closePath();
+        // 設定したパスで円の描画を行う
+        ctx.fill();
+    }
+
+        /**
+     * 扇形を描画する
+     * @param {number} x - 扇形を形成する円の中心位置の X 座標
+     * @param {number} y - 扇形を形成する円の中心位置の Y 座標
+     * @param {number} radius - 扇形を形成する円の半径
+     * @param {number} startRadian - 扇形の開始角
+     * @param {number} endRadian - 扇形の終了角
+     * @param {string} [color] - 扇形を描画する際の色
+     */
+    function drawFan(x, y, radius, startRadian, endRadian, color){
+        // 色が指定されている場合はスタイルを設定する
+        if(color != null){
+            ctx.fillStyle = color;
+        }
+        // パスの設定を開始することを明示する
+        ctx.beginPath();
+        // パスを扇形を形成する円の中心に移動する
+        ctx.moveTo(x, y);
+        // 円のパスを設定する
+        ctx.arc(x, y, radius, startRadian, endRadian);
+        // パスを閉じることを明示する
+        ctx.closePath();
+        // 設定したパスで扇形の描画を行う
         ctx.fill();
     }
 

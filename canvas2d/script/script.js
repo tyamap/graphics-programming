@@ -12,6 +12,10 @@
      */
     let ctx = null;
     /**
+     * Canvas2D のコンポジットオペレーション
+     * @type {String}
+     */
+    let compositeOperation = 'source-over';
     /**
      * Canvas2D のコンポジットオペレーション
      * @type {Boolean}
@@ -55,6 +59,49 @@
         // canvas からコンテキストを取得する
         ctx = canvas.getContext('2d');
 
+        // 合成方法の一覧
+        const OPERATION = [
+            'source-over',
+            'source-in',
+            'source-out',
+            'source-atop',
+            'destination-over',
+            'destination-in',
+            'destination-out',
+            'destination-atop',
+            'lighter',
+            'copy',
+            'xor',
+            'multiply',
+            'screen',
+            'overlay',
+            'darken',
+            'lighten',
+            'color-dodge',
+            'color-burn',
+            'hard-light',
+            'soft-light',
+            'difference',
+            'exclusion',
+            'hue',
+            'saturation',
+            'color',
+            'luminosity'
+        ];
+        // 合成方法変更のためのドロップダウンリストを生成する
+        let dropdown = document.getElementById('dropdown');
+        // 合成方法をリストに格納する
+        OPERATION.map((value) => {
+            let option = new Option(value, value);
+            dropdown.add(option);
+        });
+
+        // リストの状態変化にイベントを設定し canvas が再描画されるようにする
+        dropdown.addEventListener('change', (event) => {
+            // 選択されている項目をコンポジットオペレーションに設定する
+            compositeOperation = dropdown.value;
+        }, false);
+
         // ドロップシャドウのオプションチェック
         $('#set-shadow').on('change', () => {
             setShadow = $('#set-shadow').is(':checked')
@@ -69,119 +116,119 @@
         ctx.globalCompositeOperation = compositeOperation;
 
         if (setShadow) {
-                // 影のぼかしを設定する
-                ctx.shadowBlur = 5;
-                // 影の色を設定する
-                ctx.shadowColor = '#666666';
-                // 影のオフセットする量を設定する
-                ctx.shadowOffsetX = 5;
-                ctx.shadowOffsetY = 5;
-            } else {
-                ctx.shadowColor = 'rgba(0, 0, 0, 0)';
-            }
+            // 影のぼかしを設定する
+            ctx.shadowBlur = 5;
+            // 影の色を設定する
+            ctx.shadowColor = '#666666';
+            // 影のオフセットする量を設定する
+            ctx.shadowOffsetX = 5;
+            ctx.shadowOffsetY = 5;
+        } else {
+            ctx.shadowColor = 'rgba(0, 0, 0, 0)';
+        }
 
-            switch (id) {
-                case 'btn001':
-                    drawRect(0, 0, 100, 100, red);
-                    break;
-                case 'btn002':
-                    drawLine(100, 100, 500, 250, red);
-                    break;
-                case 'btn003':
-                    // 多角形の各頂点を定義
-                    let points = [
-                        100, 100, // 左上
-                        300, 100, // 右上
-                        100, 300, // 左下
-                        300, 300  // 右下
-                    ];
-                    drawPolygon(points, green);
-                    break;
-                case 'btn004':
-                    // 多角形の頂点の数
-                    const POINT_COUNT = 5;
-                    // 多角形の各頂点を格納するための配列
-                    let randomPoints = [];
-                    // ループで一気に頂点を追加する
-                    for (let i = 0; i < POINT_COUNT; ++i) {
-                        // 配列に要素を追加する
-                        randomPoints.push(generateRandomInt(300), generateRandomInt(300))
-                    }
-                    // 多角形の描画処理を行う
-                    drawPolygon(randomPoints, green);
-                    break;
-                case 'btn005':
-                    drawCircle(200, 200, 100, blue);
-                    break;
-                
-                case 'btn006':
-                    // 扇形の開始角
-                    let startRadian = Math.random() * Math.PI * 2.0;
-                    // 扇形の終了角
-                    let endRadian = Math.random() * Math.PI * 2.0;
-                    // 扇形の描画処理を行う
-                    drawFan(200, 200, 100, startRadian, endRadian, blue);
-                    break;
-                case 'btn007':
-                    // 二次ベジェ曲線を描画する
-                    drawQuadraticBezier(
-                        100, 100, // 始点
-                        100, 300, // 終点
-                        300, 200, // 制御点
-                        purple
-                    );
-                    // 三次ベジェ曲線を描画する
-                    drawCubicBezier(
-                        300, 100, // 始点
-                        300, 300, // 終点
-                        500, 0, // 始点の制御点
-                        500, 400, // 終点の制御点
-                        purple
-                    );
-                    break;
-                case 'btn008':
-                    // 画像の読み込みを開始する
-                    imageLoader('./image/color.jpg', (loadedImage) => {
-                        // 引数経由で画像を受け取り変数に代入しておく
-                        image = loadedImage;
-                        // 画像を描画する（等倍）
-                        ctx.drawImage(image, 100, 100);
-                        // 画像を描画する（大きさを指定）
-                        ctx.drawImage(image, 300, 100, 200, 200);
-                        // 画像を描画する（一部を切り出し＋大きさを指定）
-                        ctx.drawImage(image, 16, 16, 96, 96, 100, 300, 50, 50);
-                    });
-                    break;
-                case 'btn009':
-                    // テキストのフォントスタイルを設定する
-                    ctx.font = '30px cursive';
-                    // テキストを描画する
-                    drawText('graphics programming', 100, 100, purple);
-                    break;
-                case 'btn010':
-                    // 線形グラデーションを生成する
-                    let linearGradient = ctx.createLinearGradient(0, 0, 0, 200);
-                    // 生成した線形グラデーションに色を配置する
-                    linearGradient.addColorStop(0.0, '#ff0000'); //   0% の位置に赤
-                    linearGradient.addColorStop(0.5, '#ffff00'); //  50% の位置に黄色
-                    linearGradient.addColorStop(1.0, '#0000ff'); // 100% の位置に青
+        switch (id) {
+            case 'btn001':
+                drawRect(0, 0, 100, 100, red);
+                break;
+            case 'btn002':
+                drawLine(100, 100, 500, 250, red);
+                break;
+            case 'btn003':
+                // 多角形の各頂点を定義
+                let points = [
+                    100, 100, // 左上
+                    300, 100, // 右上
+                    100, 300, // 左下
+                    300, 300  // 右下
+                ];
+                drawPolygon(points, green);
+                break;
+            case 'btn004':
+                // 多角形の頂点の数
+                const POINT_COUNT = 5;
+                // 多角形の各頂点を格納するための配列
+                let randomPoints = [];
+                // ループで一気に頂点を追加する
+                for (let i = 0; i < POINT_COUNT; ++i) {
+                    // 配列に要素を追加する
+                    randomPoints.push(generateRandomInt(300), generateRandomInt(300))
+                }
+                // 多角形の描画処理を行う
+                drawPolygon(randomPoints, green);
+                break;
+            case 'btn005':
+                drawCircle(200, 200, 100, blue);
+                break;
+            
+            case 'btn006':
+                // 扇形の開始角
+                let startRadian = Math.random() * Math.PI * 2.0;
+                // 扇形の終了角
+                let endRadian = Math.random() * Math.PI * 2.0;
+                // 扇形の描画処理を行う
+                drawFan(200, 200, 100, startRadian, endRadian, blue);
+                break;
+            case 'btn007':
+                // 二次ベジェ曲線を描画する
+                drawQuadraticBezier(
+                    100, 100, // 始点
+                    100, 300, // 終点
+                    300, 200, // 制御点
+                    purple
+                );
+                // 三次ベジェ曲線を描画する
+                drawCubicBezier(
+                    300, 100, // 始点
+                    300, 300, // 終点
+                    500, 0, // 始点の制御点
+                    500, 400, // 終点の制御点
+                    purple
+                );
+                break;
+            case 'btn008':
+                // 画像の読み込みを開始する
+                imageLoader('./image/color.jpg', (loadedImage) => {
+                    // 引数経由で画像を受け取り変数に代入しておく
+                    image = loadedImage;
+                    // 画像を描画する（等倍）
+                    ctx.drawImage(image, 100, 100);
+                    // 画像を描画する（大きさを指定）
+                    ctx.drawImage(image, 300, 100, 200, 200);
+                    // 画像を描画する（一部を切り出し＋大きさを指定）
+                    ctx.drawImage(image, 16, 16, 96, 96, 100, 300, 50, 50);
+                });
+                break;
+            case 'btn009':
+                // テキストのフォントスタイルを設定する
+                ctx.font = '30px cursive';
+                // テキストを描画する
+                drawText('graphics programming', 100, 100, purple);
+                break;
+            case 'btn010':
+                // 線形グラデーションを生成する
+                let linearGradient = ctx.createLinearGradient(0, 0, 0, 200);
+                // 生成した線形グラデーションに色を配置する
+                linearGradient.addColorStop(0.0, '#ff0000'); //   0% の位置に赤
+                linearGradient.addColorStop(0.5, '#ffff00'); //  50% の位置に黄色
+                linearGradient.addColorStop(1.0, '#0000ff'); // 100% の位置に青
 
-                    // 矩形を描画する（生成したグラデーションを文字列の代わりに色に指定する）
-                    drawRect(  0,   0, 100, 100, linearGradient);
-                    drawRect(100, 100, 100, 100, linearGradient);
+                // 矩形を描画する（生成したグラデーションを文字列の代わりに色に指定する）
+                drawRect(  0,   0, 100, 100, linearGradient);
+                drawRect(100, 100, 100, 100, linearGradient);
 
-                    // 円形グラデーションを生成する
-                    let radialGradient = ctx.createRadialGradient(250, 0, 50, 250, 0, 300);
-                    // 生成した円形グラデーションに色を配置する
-                    radialGradient.addColorStop(0.0, '#006600'); //   0% の位置に暗い緑
-                    radialGradient.addColorStop(0.5, '#ffff00'); //  50% の位置に黄色
-                    radialGradient.addColorStop(1.0, '#ff00ff'); // 100% の位置にマゼンタ
+                // 円形グラデーションを生成する
+                let radialGradient = ctx.createRadialGradient(250, 0, 50, 250, 0, 300);
+                // 生成した円形グラデーションに色を配置する
+                radialGradient.addColorStop(0.0, '#006600'); //   0% の位置に暗い緑
+                radialGradient.addColorStop(0.5, '#ffff00'); //  50% の位置に黄色
+                radialGradient.addColorStop(1.0, '#ff00ff'); // 100% の位置にマゼンタ
 
-                    // 矩形を描画する（生成したグラデーションを文字列の代わりに色に指定する）
-                    drawRect(250,   0, 100, 100, radialGradient);
-                    drawRect(350, 100, 100, 100, radialGradient);
-                    break;
-            };
+                // 矩形を描画する（生成したグラデーションを文字列の代わりに色に指定する）
+                drawRect(250,   0, 100, 100, radialGradient);
+                drawRect(350, 100, 100, 100, radialGradient);
+                break;
+        };
     }
 
     /**

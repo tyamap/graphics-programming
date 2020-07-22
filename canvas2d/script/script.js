@@ -30,7 +30,30 @@
                     drawRect(0, 0, 100, 100, color);
                     break;
                 case 'btn002':
-                    drawLine(100, 100, 250, 250, color);
+                    drawLine(100, 100, 500, 250, color);
+                    break;
+                case 'btn003':
+                    // 多角形の各頂点を定義
+                    let points = [
+                        100, 100, // 左上
+                        300, 100, // 右上
+                        100, 300, // 左下
+                        300, 300  // 右下
+                    ];
+                    drawPolygon(points, color);
+                    break;
+                case 'btn004':
+                    // 多角形の頂点の数
+                    const POINT_COUNT = 5;
+                    // 多角形の各頂点を格納するための配列
+                    let randomPoints = [];
+                    // ループで一気に頂点を追加する
+                    for (let i = 0; i < POINT_COUNT; ++i) {
+                        // 配列に要素を追加する
+                        randomPoints.push(generateRandomInt(300), generateRandomInt(300))
+                    }
+                    // 多角形の描画処理を行う
+                    drawPolygon(randomPoints, color);
                     break;
             }
         });
@@ -93,6 +116,44 @@
         ctx.closePath();
         // 設定したパスで線描画を行う
         ctx.stroke();
+    }
+
+    /**
+     * 多角形を描画する
+     * @param {Array<number>} points - 多角形の各頂点の座標
+     * @param {string} [color] - 多角形を描画する際の色
+     */
+    function drawPolygon(points, color){
+        // points が配列であるかどうか確認し、多角形を描くために
+        // 十分な個数のデータが存在するか調べる
+        if(Array.isArray(points) !== true || points.length < 6){
+            return;
+        }
+        // 色が指定されている場合はスタイルを設定する
+        if(color != null){
+            ctx.fillStyle = color;
+        }
+        // パスの設定を開始することを明示する
+        ctx.beginPath();
+        // パスの始点を設定する
+        ctx.moveTo(points[0], points[1]);
+        // 各頂点を結ぶパスを設定する
+        for(let i = 2; i < points.length; i += 2){
+            ctx.lineTo(points[i], points[i + 1]);
+        }
+        // パスを閉じることを明示する
+        ctx.closePath();
+        // 設定したパスで多角形の描画を行う
+        ctx.fill();
+    }
+
+    /**
+     * 特定の範囲におけるランダムな整数の値を生成する
+     * @param {number} range - 乱数を生成する範囲（0 以上 ～ range 未満）
+     */
+    function generateRandomInt(range){
+        let random = Math.random();
+        return Math.floor(random * range);
     }
 })();
 

@@ -100,7 +100,10 @@
                         ctx.drawImage(image, 16, 16, 96, 96, 100, 300, 50, 50);
                     });
                     break;
-            }
+            };
+            $('#btn999').on('click', () => {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+            });
         });
     }, false);
 
@@ -301,6 +304,26 @@
         ctx.stroke();
         // パスを閉じることを明示する
         ctx.closePath();
+    }
+
+    /**
+     * 画像をロードしてコールバック関数にロードした画像を与え呼び出す
+     * @param {string} path - 画像ファイルのパス
+     * @param {function} [callback] - コールバック関数
+     */
+    function imageLoader(path, callback){
+        // 画像のインスタンスを生成する
+        let target = new Image();
+        // 画像がロード完了したときの処理を先に記述する
+        target.addEventListener('load', () => {
+            // もしコールバックがあれば呼び出す
+            if(callback != null){
+                // コールバック関数の引数に画像を渡す
+                callback(target);
+            }
+        }, false);
+        // 画像のロードを開始するためにパスを指定する
+        target.src = path;
     }
 
     /**

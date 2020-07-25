@@ -97,7 +97,7 @@
     // 登場開始時のタイムスタンプを取得する
     comingStart = Date.now();
     // 画面外（左端の外）を初期位置にする
-    viperX = 0;
+    viperX = -70;
   }
 
   /**
@@ -143,12 +143,12 @@
       let justTime = Date.now();
       let comingTime = (justTime - comingStart) / 1000;
       // 登場中は時間が経つほど右に向かって進む
-      viperX = comingTime * 50;
+      viperX = -70 + comingTime * 50;
       // 一定の位置まで移動したら登場シーンを終了する
-      if (viperX >= 100) {
+      if (viperX >= 50) {
         isComing = false;
         // 行き過ぎの可能性もあるので位置を再設定
-        viperX = 100;
+        viperX = 50;
       }
       // 点滅の演出
       if (justTime % 100 < 50) {

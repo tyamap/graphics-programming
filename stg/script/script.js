@@ -46,6 +46,16 @@
    * @type {number}
    */
   let viperY = CANVAS_HEIGHT / 2;
+  /**
+   * 自機が登場中かどうかを表すフラグ
+   * @type {boolean}
+   */
+  let isComing = false;
+  /**
+   * 登場演出を開始した際のタイムスタンプ
+   * @type {number}
+   */
+  let comingStart = null;
 
   /**
    * ページのロードが完了したときに発火する load イベント
@@ -80,6 +90,14 @@
     // canvas の大きさを設定
     canvas.width = CANVAS_WIDTH;
     canvas.height = CANVAS_HEIGHT;
+
+    // 登場シーンからスタートするための設定
+    // 登場中フラグを立てる
+    isComing = true;
+    // 登場開始時のタイムスタンプを取得する
+    comingStart = Date.now();
+    // 画面外（左端の外）を初期位置にする
+    viperX = 0;
   }
 
   /**
@@ -88,6 +106,8 @@
   function eventSetting() {
     // キーの押下時に呼び出されるイベントリスナー
     window.addEventListener('keydown', (event) => {
+      // 登場シーンはキー入力を受け付けない
+      if (isComing === true) { return; }
       // 入力されたキーに応じて処理内容を変化
       switch (event.key) {
         case 'ArrowLeft':
@@ -109,12 +129,32 @@
   /**
    * 描画処理を行う
    */
-  function render(){
-      // 描画前に画面全体を不透明な明るいグレーで塗りつぶす
+  function render() {
+    // アルファ値 1.0 で描画処理を開始する
+    ctx.globalAlpha = 1.0;
+    // 描画前に画面全体を不透明な明るいグレーで塗りつぶす
     util.drawRect(0, 0, canvas.width, canvas.height, '#eeeeee');
-    
     // 現在までの経過時間を取得する
     let nowTime = (Date.now() - startTime) / 1000;
+
+    // 登場シーンの処理
+    if (isComing === true) {
+      // 登場シーンが始まってからの経過時間
+      let justTime = Date.now();
+      let comingTime = (justTime - comingStart) / 1000;
+      // 登場中は時間が経つほど右に向かって進む
+      viperX = comingTime * 50;
+      // 一定の位置まで移動したら登場シーンを終了する
+      if (viperX >= 100) {
+        isComing = false;
+        // 行き過ぎの可能性もあるので位置を再設定
+        viperX = 100;
+      }
+      // 点滅の演出
+      if (justTime % 100 < 50) {
+        ctx.globalAlpha = 0.5;
+      }
+    }
 
     // 画像を現在の自機の位置に準じた位置に描画
     ctx.drawImage(image, viperX, viperY);

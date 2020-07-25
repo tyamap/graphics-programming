@@ -36,6 +36,16 @@
    * @type {number}
    */
   let startTime = null;
+  /**
+   * 自機の X 座標
+   * @type {number}
+   */
+  let viperX = CANVAS_WIDTH / 2;
+  /**
+   * 自機の Y 座標
+   * @type {number}
+   */
+  let viperY = CANVAS_HEIGHT / 2;
 
   /**
    * ページのロードが完了したときに発火する load イベント
@@ -54,6 +64,8 @@
         image = loadedImage;
         // 初期化処理を行う
         initialize();
+        // イベントを設定する
+        eventSetting();
         // 実行開始時のタイムスタンプを取得
         startTime = Date.now();
         // 描画処理を行う
@@ -71,6 +83,30 @@
   }
 
   /**
+   * イベントを設定する
+   */
+  function eventSetting() {
+    // キーの押下時に呼び出されるイベントリスナー
+    window.addEventListener('keydown', (event) => {
+      // 入力されたキーに応じて処理内容を変化
+      switch (event.key) {
+        case 'ArrowLeft':
+          viperX -= 10;
+          break;
+        case 'ArrowRight':
+          viperX += 10;
+          break;
+        case 'ArrowUp':
+          viperY -= 10;
+          break;
+        case 'ArrowDown':
+          viperY += 10;
+          break;
+      }
+    }, false);
+  }
+
+  /**
    * 描画処理を行う
    */
   function render(){
@@ -79,13 +115,9 @@
     
     // 現在までの経過時間を取得する
     let nowTime = (Date.now() - startTime) / 1000;
-    // 時間の経過に準じて目標をサイン波で動かす
-    let s = Math.sin(nowTime);
-    // 効果が分かりやすくなるように 100 倍
-    let x = s * 100.0;
 
-    //画像の動きの描画
-    ctx.drawImage(image, CANVAS_WIDTH / 2 + x, CANVAS_HEIGHT / 2);
+    // 画像を現在の自機の位置に準じた位置に描画
+    ctx.drawImage(image, viperX, viperY);
 
     // 描画処理を再帰呼び出し
     requestAnimationFrame(render);

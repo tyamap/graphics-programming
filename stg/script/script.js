@@ -4,12 +4,12 @@
    * canvas の幅
    * @type {number}
    */
-  const CANVAS_WIDTH = 640;
+  const CANVAS_WIDTH = 960;
   /**
    * canvas の高さ
    * @type {number}
    */
-  const CANVAS_HEIGHT = 480;
+  const CANVAS_HEIGHT = 540;
 
   /**
    * Canvas2D API をラップしたユーティリティクラス

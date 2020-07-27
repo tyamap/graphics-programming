@@ -37,50 +37,35 @@
    */
   let startTime = null;
   /**
-   * 自機の X 座標
-   * @type {number}
+   * 自機キャラクターのインスタンス
+   * @type {Viper}
    */
-  let viperX = CANVAS_WIDTH / 2;
-  /**
-   * 自機の Y 座標
-   * @type {number}
-   */
-  let viperY = CANVAS_HEIGHT / 2;
-  /**
-   * 自機が登場中かどうかを表すフラグ
-   * @type {boolean}
-   */
-  let isComing = false;
-  /**
-   * 登場演出を開始した際のタイムスタンプ
-   * @type {number}
-   */
-  let comingStart = null;
+  let viper = null;
 
   /**
    * ページのロードが完了したときに発火する load イベント
    */
   window.addEventListener('load', () => {
-      // ユーティリティクラスを初期化
-      util = new Canvas2DUtility(document.body.querySelector('#main_canvas'));
-      // ユーティリティクラスから canvas を取得
-      canvas = util.canvas;
-      // ユーティリティクラスから 2d コンテキストを取得
-      ctx = util.context;
+    // ユーティリティクラスを初期化
+    util = new Canvas2DUtility(document.body.querySelector('#main_canvas'));
+    // ユーティリティクラスから canvas を取得
+    canvas = util.canvas;
+    // ユーティリティクラスから 2d コンテキストを取得
+    ctx = util.context;
 
-      // まず最初に画像の読み込みを開始する
-      util.imageLoader('./image/viper.png', (loadedImage) => {
-        // 引数経由で画像を受け取り変数に代入しておく
-        image = loadedImage;
-        // 初期化処理を行う
-        initialize();
-        // イベントを設定する
-        eventSetting();
-        // 実行開始時のタイムスタンプを取得
-        startTime = Date.now();
-        // 描画処理を行う
-        render();
-      });
+    // まず最初に画像の読み込みを開始する
+    util.imageLoader('./image/viper.png', (loadedImage) => {
+      // 引数経由で画像を受け取り変数に代入しておく
+      image = loadedImage;
+      // 初期化処理を行う
+      initialize();
+      // イベントを設定する
+      eventSetting();
+      // 実行開始時のタイムスタンプを取得
+      startTime = Date.now();
+      // 描画処理を行う
+      render();
+    });
   }, false);
 
   /**
@@ -91,13 +76,15 @@
     canvas.width = CANVAS_WIDTH;
     canvas.height = CANVAS_HEIGHT;
 
-    // 登場シーンからスタートするための設定
-    // 登場中フラグを立てる
-    isComing = true;
-    // 登場開始時のタイムスタンプを取得する
-    comingStart = Date.now();
-    // 画面外（左端の外）を初期位置にする
-    viperX = -70;
+    // 自機キャラクターを初期化する
+    viper = new Viper(ctx, 0, 0, image);
+    // 登場シーンからスタートするための設定を行う
+    viper.setComing(
+        -70,                // 登場演出時の開始 X 座標
+        CANVAS_HEIGHT / 2,  // 登場演出時の開始 Y 座標
+        70,                 // 登場演出を終了とする X 座標
+        CANVAS_HEIGHT / 2   // 登場演出を終了とする Y 座標
+    );
   }
 
   /**
@@ -107,20 +94,20 @@
     // キーの押下時に呼び出されるイベントリスナー
     window.addEventListener('keydown', (event) => {
       // 登場シーンはキー入力を受け付けない
-      if (isComing === true) { return; }
+      if (viper.isComing === true) { return; }
       // 入力されたキーに応じて処理内容を変化
       switch (event.key) {
-        case 'ArrowLeft':
-          viperX -= 10;
+        case 'ArrowLeft': // アローキーの左
+          viper.position.x -= 10;
           break;
-        case 'ArrowRight':
-          viperX += 10;
+        case 'ArrowRight': // アローキーの右
+          viper.position.x += 10;
           break;
         case 'ArrowUp':
-          viperY -= 10;
+          viper.position.y -= 10; // アローキーの上
           break;
         case 'ArrowDown':
-          viperY += 10;
+          viper.position.y += 10; // アローキーの下
           break;
       }
     }, false);
@@ -138,26 +125,27 @@
     let nowTime = (Date.now() - startTime) / 1000;
 
     // 登場シーンの処理
-    if (isComing === true) {
+    if (viper.isComing === true) {
       // 登場シーンが始まってからの経過時間
       let justTime = Date.now();
-      let comingTime = (justTime - comingStart) / 1000;
+      let comingTime = (justTime - viper.comingStart) / 1000;
       // 登場中は時間が経つほど右に向かって進む
-      viperX = -70 + comingTime * 50;
+      let x = -70 + comingTime * 50;
       // 一定の位置まで移動したら登場シーンを終了する
-      if (viperX >= 50) {
-        isComing = false;
-        // 行き過ぎの可能性もあるので位置を再設定
-        viperX = 50;
+      if (x >= viper.comingEndPosition.x) {
+        viper.isComing = false;        // 登場シーンフラグを下ろす
+        x = viper.comingEndPosition.x; // 行き過ぎの可能性もあるので位置を再設定
       }
-      // 点滅の演出
+      // 求めた X 座標を自機に設定する
+      viper.position.set(x, viper.position.y);
+      // justTime を 100 で割ったとき余りが 50 より小さくなる場合だけ半透明にする
       if (justTime % 100 < 50) {
         ctx.globalAlpha = 0.5;
       }
     }
 
-    // 画像を現在の自機の位置に準じた位置に描画
-    ctx.drawImage(image, viperX, viperY);
+    // 自機キャラクターを描画
+    viper.draw();
 
     // 描画処理を再帰呼び出し
     requestAnimationFrame(render);

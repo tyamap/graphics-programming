@@ -103,6 +103,11 @@ class Viper extends Character {
          */
         this.comingStart = null;
         /**
+         * 登場演出を開始する座標
+         * @type {Position}
+         */
+        this.comingStartPosition = null;
+        /**
          * 登場演出を完了とする座標
          * @type {Position}
          */

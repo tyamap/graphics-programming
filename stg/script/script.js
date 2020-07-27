@@ -124,28 +124,8 @@
     // 現在までの経過時間を取得する
     let nowTime = (Date.now() - startTime) / 1000;
 
-    // 登場シーンの処理
-    if (viper.isComing === true) {
-      // 登場シーンが始まってからの経過時間
-      let justTime = Date.now();
-      let comingTime = (justTime - viper.comingStart) / 1000;
-      // 登場中は時間が経つほど右に向かって進む
-      let x = -70 + comingTime * 50;
-      // 一定の位置まで移動したら登場シーンを終了する
-      if (x >= viper.comingEndPosition.x) {
-        viper.isComing = false;        // 登場シーンフラグを下ろす
-        x = viper.comingEndPosition.x; // 行き過ぎの可能性もあるので位置を再設定
-      }
-      // 求めた X 座標を自機に設定する
-      viper.position.set(x, viper.position.y);
-      // justTime を 100 で割ったとき余りが 50 より小さくなる場合だけ半透明にする
-      if (justTime % 100 < 50) {
-        ctx.globalAlpha = 0.5;
-      }
-    }
-
-    // 自機キャラクターを描画
-    viper.draw();
+    // 自機キャラクターの状態を更新する
+    viper.update();
 
     // 描画処理を再帰呼び出し
     requestAnimationFrame(render);

@@ -109,6 +109,11 @@ class Viper extends Character {
         super(ctx, x, y, w, h, 0, image);
 
         /**
+         * 自身の移動スピード（update 一回あたりの移動量）
+         * @type {number}
+         */
+        this.speed = 3;
+        /**
          * viper が登場中かどうかを表すフラグ
          * @type {boolean}
          */
@@ -158,13 +163,13 @@ class Viper extends Character {
         let justTime = Date.now();
 
         // 登場シーンの処理
-        if(this.isComing === true){
+        if (this.isComing === true) {
             // 登場シーンが始まってからの経過時間
             let comingTime = (justTime - this.comingStart) / 1000;
             // 登場中は時間が経つほど右に向かって進む
             let x = this.comingStartPosition.x + comingTime * 50;
             // 一定の位置まで移動したら登場シーンを終了する
-            if(x >= this.comingEndPosition.x){
+            if (x >= this.comingEndPosition.x) {
                 this.isComing = false;        // 登場シーンフラグを下ろす
                 x = this.comingEndPosition.x; // 行き過ぎの可能性もあるので位置を再設定
             }
@@ -172,9 +177,29 @@ class Viper extends Character {
             this.position.set(x, this.position.y);
 
             // 自機の登場演出時は点滅させる
-            if(justTime % 100 < 50){
+            if (justTime % 100 < 50) {
                 this.ctx.globalAlpha = 0.5;
             }
+        } else {
+            // キーの押下状態を調べて挙動を変える
+            if (window.isKeyDown.key_ArrowLeft === true) {
+                this.position.x -= this.speed; // アローキーの左
+            }
+            if (window.isKeyDown.key_ArrowRight === true) {
+                this.position.x += this.speed; // アローキーの右
+            }
+            if (window.isKeyDown.key_ArrowUp === true) {
+                this.position.y -= this.speed; // アローキーの上
+            }
+            if (window.isKeyDown.key_ArrowDown === true) {
+                this.position.y += this.speed; // アローキーの下
+            }
+            // 移動後の位置が画面外へ出ていないか確認して修正する
+            let canvasWidth = this.ctx.canvas.width;
+            let canvasHeight = this.ctx.canvas.height;
+            let tx = Math.min(Math.max(this.position.x, 0), canvasWidth);
+            let ty = Math.min(Math.max(this.position.y, 0), canvasHeight);
+            this.position.set(tx, ty);
         }
 
         // 自機キャラクターを描画する

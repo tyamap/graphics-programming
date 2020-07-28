@@ -46,7 +46,7 @@ class Character {
      * @param {number} life - キャラクターのライフ（生存フラグを兼ねる）
      * @param {Image} image - キャラクターの画像
      */
-    constructor(ctx, x, y, w, h, life, image){
+    constructor(ctx, x, y, w, h, life, imagePath){
         /**
          * @type {CanvasRenderingContext2D}
          */
@@ -68,9 +68,18 @@ class Character {
          */
         this.life = life;
         /**
+         * @type {boolean}
+         */
+        this.ready = false;
+        /**
          * @type {Image}
          */
-        this.image = image;
+        this.image = new Image();
+        this.image.addEventListener('load', () => {
+            // 画像のロードが完了したら準備完了フラグを立てる
+            this.ready = true;
+        }, false);
+        this.image.src = imagePath;
     }
 
     /**
@@ -155,7 +164,7 @@ class Viper extends Character {
         this.comingEndPosition = new Position(endX, endY);
     }
 
-        /**
+    /**
      * キャラクターの状態を更新し描画を行う
      */
     update(){

@@ -86,7 +86,7 @@
     canvas.height = CANVAS_HEIGHT;
 
     // 自機キャラクターを初期化する
-    viper = new Viper(ctx, 0, 0, 64, 64, image);
+    viper = new Viper(ctx, 0, 0, 64, 64, './image/viper.png');
     // 登場シーンからスタートするための設定を行う
     viper.setComing(
         -viper.width / 2,   // 登場演出時の開始 X 座標

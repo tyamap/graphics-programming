@@ -142,6 +142,11 @@ class Viper extends Character {
          * @type {Position}
          */
         this.comingEndPosition = null;
+        /**
+         * 自身が持つショットインスタンスの配列
+         * @type {Array<Shot>}
+         */
+        this.shotArray = null;
     }
 
     /**
@@ -162,6 +167,15 @@ class Viper extends Character {
         this.comingStartPosition = new Position(startX, startY);
         // 登場終了とする座標を設定する
         this.comingEndPosition = new Position(endX, endY);
+    }
+
+    /**
+     * ショットを設定する
+     * @param {Array<Shot>} shotArray - 自身に設定するショットの配列
+     */
+    setShotArray(shotArray) {
+        // 自身のプロパティに設定する
+        this.shotArray = shotArray;
     }
 
     /**
@@ -203,6 +217,19 @@ class Viper extends Character {
             if (window.isKeyDown.key_ArrowDown === true) {
                 this.position.y += this.speed; // アローキーの下
             }
+            // キーの押下状態を調べてショットを生成する
+            if (window.isKeyDown.key_z === true) {
+                // ショットの生存を確認し非生存のものがあれば生成する
+                for (let i = 0; i < this.shotArray.length; ++i) {
+                    // 非生存かどうかを確認する
+                    if (this.shotArray[i].life <= 0) {
+                        // 自機キャラクターの座標にショットを生成する
+                        this.shotArray[i].set(this.position.x, this.position.y);
+                        // ひとつ生成したらループを抜ける
+                        break;
+                    }
+                }
+            }
             // 移動後の位置が画面外へ出ていないか確認して修正する
             let canvasWidth = this.ctx.canvas.width;
             let canvasHeight = this.ctx.canvas.height;
@@ -219,3 +246,55 @@ class Viper extends Character {
     }
 }
 
+/**
+ * shot クラス
+ */
+class Shot extends Character {
+    /**
+     * @constructor
+     * @param {CanvasRenderingContext2D} ctx - 描画などに利用する 2D コンテキスト
+     * @param {number} x - X 座標
+     * @param {number} y - Y 座標
+     * @param {number} w - 幅
+     * @param {number} h - 高さ
+     * @param {Image} image - キャラクター用の画像のパス
+     */
+    constructor(ctx, x, y, w, h, imagePath){
+        // 継承元の初期化
+        super(ctx, x, y, w, h, 0, imagePath);
+
+        /**
+         * 自身の移動スピード（update 一回あたりの移動量）
+         * @type {number}
+         */
+        this.speed = 7;
+    }
+
+    /**
+     * ショットを配置する
+     * @param {number} x - 配置する X 座標
+     * @param {number} y - 配置する Y 座標
+     */
+    set(x, y){
+        // 登場開始位置にショットを移動させる
+        this.position.set(x, y);
+        // ショットのライフを 0 より大きい値（生存の状態）に設定する
+        this.life = 1;
+    }
+
+    /**
+     * キャラクターの状態を更新し描画を行う
+     */
+    update(){
+        // ショットのライフが 0 以下の場合はなにもしない
+        if(this.life <= 0){return;}
+        // もしショットが画面外へ移動していたらライフを 0（非生存の状態）に設定する
+        if(this.position.x - this.width > this.ctx.canvas.width){
+            this.life = 0;
+        }
+        // ショットを右に向かって移動させる
+        this.position.x += this.speed;
+        // ショットを描画する
+        this.draw();
+    }
+}

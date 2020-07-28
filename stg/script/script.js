@@ -23,7 +23,7 @@
    * ショットの最大個数
    * @type {number}
    */
-  const SHOT_MAX_COUNT = 10;
+  const SHOT_MAX_COUNT = 15;
 
   /**
    * Canvas2D API をラップしたユーティリティクラス

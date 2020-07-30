@@ -232,11 +232,12 @@ class Viper extends Character {
             if(window.isKeyDown.key_z === true){
                 // ショットを撃てる状態なのかを確認する
                 // ショットチェック用カウンタが 0 以上ならショットを生成できる
-                if(this.shotCheckCounter >= 0){
+                if (this.shotCheckCounter >= 0) {
+                    let i;
                     // ショットの生存を確認し非生存のものがあれば生成する
-                    for(let i = 0; i < this.shotArray.length; ++i){
+                    for (i = 0; i < this.shotArray.length; ++i) {
                         // 非生存かどうかを確認する
-                        if(this.shotArray[i].life <= 0){
+                        if (this.shotArray[i].life <= 0) {
                             // 自機キャラクターの座標にショットを生成する
                             this.shotArray[i].set(this.position.x, this.position.y);
                             // ショットを生成したのでインターバルを設定する
@@ -288,6 +289,11 @@ class Shot extends Character {
          * @type {number}
          */
         this.speed = 7;
+        /**
+         * ショットの進行方向
+         * @type {Position}
+         */
+        this.vector = new Position(1.0, 0.0);
     }
 
     /**
@@ -303,6 +309,16 @@ class Shot extends Character {
     }
 
     /**
+     * ショットの進行方向を設定する
+     * @param {number} x - X 方向の移動量
+     * @param {number} y - Y 方向の移動量
+     */
+    setVector(x, y){
+        // 自身の vector プロパティに設定する
+        this.vector.set(x, y);
+    }
+
+    /**
      * キャラクターの状態を更新し描画を行う
      */
     update(){
@@ -312,8 +328,9 @@ class Shot extends Character {
         if(this.position.x - this.width > this.ctx.canvas.width){
             this.life = 0;
         }
-        // ショットを右に向かって移動させる
-        this.position.x += this.speed;
+        // ショットを進行方向に沿って移動させる
+        this.position.x += this.vector.x * this.speed;
+        this.position.y += this.vector.y * this.speed;
         // ショットを描画する
         this.draw();
     }

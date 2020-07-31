@@ -20,6 +20,11 @@
    */
   const CANVAS_HEIGHT = 540;
   /**
+   * 敵キャラクターのインスタンス数
+   * @type {number}
+   */
+  const ENEMY_MAX_COUNT = 10;
+  /**
    * ショットの最大個数
    * @type {number}
    */
@@ -50,6 +55,11 @@
    * @type {Viper}
    */
   let viper = null;
+  /**
+   * 敵キャラクターのインスタンスを格納する配列
+   * @type {Array<Enemy>}
+   */
+  let enemyArray = [];
   /**
    * ショットのインスタンスを格納する配列
    * @type {Array<Shot>}
@@ -96,6 +106,11 @@
       CANVAS_HEIGHT / 2   // 登場演出を終了とする Y 座標
     );
 
+    // 敵キャラクターを初期化する
+    for(i = 0; i < ENEMY_MAX_COUNT; ++i){
+      enemyArray[i] = new Enemy(ctx, 0, 0, 48, 48, './image/enemy_small.png');
+    }
+    
     // ショットを初期化する
     for(let i = 0; i < SHOT_MAX_COUNT; ++i){
       shotArray[i] = new Shot(ctx, 0, 0, 32, 32, './image/viper_shot.png');
@@ -115,6 +130,10 @@
     let ready = true;
     // AND 演算で準備完了しているかチェックする
     ready = ready && viper.ready;
+    // 同様に敵キャラクターの準備状況も確認する
+    enemyArray.map((v) => {
+      ready = ready && v.ready;
+    });
     // 同様にショットの準備状況も確認する
     shotArray.map((v) => {
       ready = ready && v.ready;
@@ -167,6 +186,11 @@
 
     // 自機キャラクターの状態を更新する
     viper.update();
+
+    // 敵キャラクターの状態を更新する
+    enemyArray.map((v) => {
+      v.update();
+    });
 
     // ショットの状態を更新する
     shotArray.map((v) => {

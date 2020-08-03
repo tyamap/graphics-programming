@@ -45,6 +45,11 @@
    * @type {CanvasRenderingContext2D}
    */
   let ctx = null;
+    /**
+   * シーンマネージャー
+   * @type {SceneManager}
+   */
+  let scene = null;
   /**
    * 実行開始時のタイムスタンプ
    * @type {number}
@@ -95,6 +100,9 @@
     // canvas の大きさを設定
     canvas.width = CANVAS_WIDTH;
     canvas.height = CANVAS_HEIGHT;
+
+    // シーンを初期化する
+    scene = new SceneManager();
 
     // 自機キャラクターを初期化する
     viper = new Viper(ctx, 0, 0, 64, 64, './image/viper.png');
@@ -147,6 +155,8 @@
     if(ready === true){
       // イベントを設定する
       eventSetting();
+      // シーンを定義する
+      sceneSetting();
       // 実行開始時のタイムスタンプを取得する
       startTime = Date.now();
       // 描画処理を開始する
@@ -174,6 +184,37 @@
   }
 
   /**
+   * シーンを設定する
+   */
+  function sceneSetting() {
+    // イントロシーン
+    scene.add('intro', (time) => {
+      // 2 秒経過したらシーンを invade に変更する
+      if (time > 2.0) {
+        scene.use('invade');
+      }
+    });
+    // invade シーン
+    scene.add('invade', (time) => {
+      // シーンのフレーム数が 0 のとき以外は即座に終了する
+      if (scene.frame !== 0) { return; }
+      // ライフが 0 の状態の敵キャラクターが見つかったら配置する
+      for (let i = 0; i < ENEMY_MAX_COUNT; ++i) {
+        if (enemyArray[i].life <= 0) {
+          let e = enemyArray[i];
+          // 出現場所は X が画面右端の外側、Y が画面中央に設定する
+          e.set(CANVAS_WIDTH + e.width, CANVAS_HEIGHT / 2);
+          // 進行方向は真下に向かうように設定する
+          e.setVector(-1.0, 0.0);
+          break;
+        }
+      }
+    });
+    // 一番最初のシーンには intro を設定する
+    scene.use('intro');
+  }
+  
+  /**
    * 描画処理を行う
    */
   function render() {
@@ -183,6 +224,9 @@
     util.drawRect(0, 0, canvas.width, canvas.height, '#eeeeee');
     // 現在までの経過時間を取得する
     let nowTime = (Date.now() - startTime) / 1000;
+
+    // シーンを更新する
+    scene.update();
 
     // 自機キャラクターの状態を更新する
     viper.update();

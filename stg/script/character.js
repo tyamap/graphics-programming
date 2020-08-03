@@ -373,7 +373,7 @@ class Enemy extends Character {
          * 自身の移動スピード（update 一回あたりの移動量）
          * @type {number}
          */
-        this.speed = 3;
+        this.speed = 4;
     }
 
     /**
